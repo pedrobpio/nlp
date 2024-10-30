@@ -1,5 +1,6 @@
 import regex as re
-import tqdm
+# import tqdm
+from tqdm.autonotebook import tqdm
 import os
 import json
 
@@ -89,26 +90,28 @@ class BPETokenizer:
         # read all files into a doc
         files = self.get_files_list(directory)
         files_text = []
-        for file in tqdm.tqdm(files):
+        print("Opening files text")
+        for file in tqdm(files):
             file = os.path.join(directory, file)
             with open(file, 'r') as f:
                 data = json.load(f)
                 files_text .append(data['text'])
 
 
-
+        print("Applying regex rules on files text...")
         files_text_word_list = [self.apply_regex(text) for text in files_text]
 
         
         # build the first set of tokens
         # tokens = self.build_tokens_list(text)
         tokens_list = []
-        for word_list in tqdm.tqdm(files_text_word_list):
+        print("Selecting tokens")
+        for word_list in tqdm(files_text_word_list):
             files_tokens_list = [self.build_tokens_list(word) for word in word_list]
             tokens_list += files_tokens_list
 
-
-        for i in tqdm.tqdm(range(number_iterations)):
+        print("training...")
+        for i in tqdm(range(number_iterations)):
             pair_token_id = vocab_len + i
             pair_counts = {}
             for tokens in tokens_list:
@@ -116,7 +119,7 @@ class BPETokenizer:
                     pair_counts[pair] = pair_counts.get(pair, 0) + quantity
             
             most_frequent_pair = self.get_most_frequent_pair(pair_counts)
-
+            print(f'pair {most_frequent_pair} -> {pair_token_id}')
             for index, tokens in enumerate(tokens_list):
                 tokens_list[index] = self.merge_tokens(tokens, most_frequent_pair, pair_token_id)
 
