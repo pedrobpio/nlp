@@ -100,7 +100,7 @@ class BPETokenizer:
 
         print("Applying regex rules on files text...")
         files_text_word_list = [self.apply_regex(text) for text in files_text]
-
+        
         
         # build the first set of tokens
         # tokens = self.build_tokens_list(text)
@@ -110,18 +110,26 @@ class BPETokenizer:
             files_tokens_list = [self.build_tokens_list(word) for word in word_list]
             tokens_list += files_tokens_list
 
+        tokens_list_dict = {}
+        for token in tokens_list:
+            # print(token)
+            tokens_list_dict[tuple(token)] = tokens_list_dict.get(tuple(token), 0) + 1
+
         print("training...")
         for i in tqdm(range(number_iterations)):
             pair_token_id = vocab_len + i
             pair_counts = {}
-            for tokens in tokens_list:
-                for pair, quantity in self.count_consecutive_tokens(tokens).items():
-                    pair_counts[pair] = pair_counts.get(pair, 0) + quantity
+            for tokens in tokens_list_dict:
+                for pair, quantity in self.count_consecutive_tokens(list(tokens)).items():
+                    pair_counts[pair] = pair_counts.get(pair, 0) + quantity * tokens_list_dict[tokens]
             
             most_frequent_pair = self.get_most_frequent_pair(pair_counts)
             print(f'pair {most_frequent_pair} -> {pair_token_id}')
-            for index, tokens in enumerate(tokens_list):
-                tokens_list[index] = self.merge_tokens(tokens, most_frequent_pair, pair_token_id)
+            new_tokens_list_dict = {}
+            for tokens in tokens_list_dict:
+                if len(tokens) > 1:
+                    new_tokens_list_dict[tuple(self.merge_tokens(list(tokens), most_frequent_pair, pair_token_id))] = tokens_list_dict[tokens]
+            tokens_list_dict = new_tokens_list_dict 
 
             
             # self.tokenizer_merges[most_frequent_pair] = pair_token_id
@@ -129,10 +137,11 @@ class BPETokenizer:
             self.add_merge_to_merges_list(most_frequent_pair, pair_token_id)
             self.add_pair_to_vocab(most_frequent_pair, pair_token_id)
             #check if the there is still tokens to be merged
-            if max([len(tokens) for tokens in tokens_list]) == 1:
-                print("No more tokens to merge")
-                print(f'only performed {i+1} iteretions of {number_iterations}')
-                break
+            # if max([len(tokens) for tokens in tokens_list]) == 1:
+            #     print("No more tokens to merge")
+            #     print(f'only performed {i+1} iteretions of {number_iterations}')
+            #     break
+
 
     def tokenizer_fit(self, desireble_size: int, text: str):
         # reset the vocab and merges_list of the tokenizer
