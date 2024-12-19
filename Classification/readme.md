@@ -3,14 +3,12 @@
 At this folder we are implementing basic classification on text using NB, Logistic regression and KNN
 
 For that, we are also imlementing a grid search in the hiperparameters
-the code containing the classes on the hiperparameters optimization with the grid-search on each classifier can be found  [find_best_hyperparameters.py](https://github.com/pedrobpio/nlp/blob/main/Classification/find_best_hyperparameters.py)
+the code containing the hiperparameters optimization class with the grid-search for each classifier can be found  [find_best_hyperparameters.py](https://github.com/pedrobpio/nlp/blob/main/Classification/find_best_hyperparameters.py). at the same class you can train and run the best models found with the grid-search.
 
-Here you will also find how to use each classifier in on its respectives ipynb files:
+you can also find a notebook exemple on how to use it at:
 
-[run_NB](https://github.com/pedrobpio/nlp/blob/main/Classification/run_NB.ipynb)
+[Find_best_hiperparams.ipynb](https://github.com/pedrobpio/nlp/blob/main/Classification/find_best_hyperparameters.py)
 
-[run_LR](https://github.com/pedrobpio/nlp/blob/main/Classification/run_LR.ipynb)
+The datasets can be found at the [data folder](https://github.com/pedrobpio/nlp/tree/main/Classification/Data)
 
-[run_KNN](https://github.com/pedrobpio/nlp/blob/main/Classification/run_KNN.ipynb)
-
-we also saved several CSV containing the results of the gris search hiper_parameter optimizations.
+While the grid search results can be found at the [Grid_search folder](https://github.com/pedrobpio/nlp/tree/main/Classification/Grid_results)
